@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-randomly = "*"
+coverage = "*"
+tox = "*"
+sphinx = "*"
+sphinx_rtd_theme = "*"
+flake8 = "*"
+
+[packages]
+urllib3 = "*"
+pyyaml = "*"
