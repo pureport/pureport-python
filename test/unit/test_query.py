@@ -3,11 +3,16 @@
 # Copyright (c) 2020, Pureport, Inc.
 # All Rights Reserved
 
+import os
+
 from collections import namedtuple
 
 import pytest
 
 from ..utils import utils
+
+os.environ['PUREPORT_API_KEY'] = utils.random_string()
+os.environ['PUREPORT_API_SECRET'] = utils.random_string()
 
 from pureport import query
 from pureport.exceptions import PureportError
