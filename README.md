@@ -1,5 +1,7 @@
 # Pureport Python Client
 
+![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg)
+
 The Pureport Python Client provides a Python programmatic interface to the 
 Pureport REST API.  The Pureport Python Client is predominately a session and 
 transport library designed to making interfacing with the API simple.  For 
@@ -11,7 +13,7 @@ more information about Pureport or to sign up for an account please visit the
 You can install the Pureport Python Client using `pip`.
 
 ```
-   $ pip install pureport-client
+   $ pip install pureport-python
 ```
 
 This project can be run directly from source as well using `pipenv`.  To 
@@ -49,17 +51,9 @@ Once the keys are generated, set the required environment variables.
    export PUREPORT_API_SECRET="<your api secret here>"
 ```
 
-With the credentials set properly, you can using the Pureport Python
-SDK to interact with the Pureport Fabric API.
-
-```
-   import pureport
-   pureport.get("/accounts")
-   <output omitted>
-```
-
-When consuming the Pureport Python Client in your own projects, the easiest
-way to embed this library is to create a Session object as shown below.
+This implementation provides a class for interfacing with the Pureport API.
+The session class handles authenticating to the API and provides 
+convenience methods for sending requests to the server.
 
 ```
    from pureport.session import Session
@@ -68,6 +62,15 @@ way to embed this library is to create a Session object as shown below.
    session = Session(*default())
    response = session.get("/accounts")
    print(response.json)
+```
+
+The library also provides a set of functional bindings to the Pureport
+API using the OpenAPI spec file.  To use the functional bindings, 
+import the API module and call the function directly.
+
+```
+   from pureport import api
+   api.find_all_accounts()
 ```
 
 For details and documentation of the Pureport Fabric API, please check 
