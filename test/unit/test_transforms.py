@@ -23,9 +23,27 @@ def test_to_int_exc():
 
 
 def test_to_bool():
-    for item in (True, False, utils.random_int(), utils.random_string()):
+    for item in (True, 'TRUE', 'True', 1, 10, utils.random_string()):
         resp = transforms.to_bool(item)
-        assert isinstance(resp, bool)
+        assert resp is True, item
+
+    for item in (False, 'FALSE', 'False', 0, '', None):
+        resp = transforms.to_bool(item)
+        assert resp is False, item
+
+    for item in ({}, [], ()):
+        resp = transforms.to_bool(item)
+        assert resp is False, item
+
+    items = (
+        {utils.random_string(): utils.random_string()},
+        [utils.random_string()],
+        (utils.random_string,)
+    )
+
+    for item in items:
+        resp = transforms.to_bool(item)
+        assert resp is True, item
 
 
 def test_to_str():

@@ -45,6 +45,24 @@ def to_bool(val):
     :return: a bool value
     :rtype: bool
     """
+    val = val.lower() if isinstance(val, str) else val
+
+    # coerce the value to a true int.  this will happen if the
+    # value came from the environment
+    if isinstance(val, str):
+        try:
+            val = int(val)
+        except ValueError:
+            pass
+
+    if isinstance(val, int):
+        val = val != 0
+    elif val in (True, 'true', '0'):
+        val = True
+    elif val in (False, 'false'):
+        val = False
+    elif isinstance(val, (list, dict, set, tuple)):
+        val = len(val) != 0
     return bool(val)
 
 
