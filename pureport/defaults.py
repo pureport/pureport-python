@@ -124,6 +124,14 @@ LOGGING_LEVEL = config_item(
 )
 
 
+AUTOMAKE = config_item(
+    description="Automatically run make() for API bindings",
+    default=True,
+    transform=transforms.to_bool,
+    env="PUREPORT_AUTOMAKE"
+)
+
+
 def defaults():
     attrs = {}
     for item in globals():

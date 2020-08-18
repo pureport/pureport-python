@@ -44,7 +44,6 @@ from functools import (
     update_wrapper,
 )
 
-
 from pureport.helpers import (
     get_api,
     get_value
@@ -55,7 +54,11 @@ from pureport.transforms import (
     to_snake_case
 )
 
-from pureport import models
+from pureport import (
+    models,
+    defaults
+)
+
 from pureport.session import Session
 from pureport.credentials import default
 from pureport.exceptions import PureportError
@@ -207,4 +210,5 @@ def make():
                 globals()[name] = func
 
 
-make()
+if defaults.automake is True:
+    make()
