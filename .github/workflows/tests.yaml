@@ -40,8 +40,5 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 pureport/ test/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: test with pytest
-        env:
-          PUREPORT_API_KEY: ${{ secrets.PUREPORT_API_KEY }}
-          PUREPORT_API_SECRET: ${{ secrets.PUREPORT_API_SECRET }}
         run: |
           pytest --cov='pureport' --cov-append -v test/

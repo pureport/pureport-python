@@ -6,6 +6,12 @@
 import os
 import re
 
+
+from ..utils import utils
+
+os.environ['PUREPORT_API_KEY'] = utils.random_string()
+os.environ['PUREPORT_API_SECRET'] = utils.random_string()
+
 from pureport import api
 
 
