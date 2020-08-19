@@ -203,12 +203,12 @@ def make():
         for method, attrs in properties.items():
             if 'operationId' in attrs:
                 name = to_snake_case(attrs['operationId'])
-                func = partial(request, session=session, method=method, uri=uri)
+                func = partial(request, session, method, uri)
                 func.__doc__ = attrs.get('summary')
                 func.__name__ = name
                 log.debug('adding function {}'.format(name))
                 globals()[name] = func
 
 
-if defaults.automake is True:
+if defaults.automake_bindings is True:
     make()
