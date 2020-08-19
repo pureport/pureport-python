@@ -13,7 +13,7 @@ test: clean
 	tox
 
 .PHONY: docs
-docs:
-	cd docs && sphinx-apidoc ../pureport -o . -f
+docs: 
 	cd docs && make clean
-	cd docs && make html
+	cd docs && sphinx-apidoc ../pureport -o . -f
+	cd docs && PUREPORT_AUTOMAKE=0 make html

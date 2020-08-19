@@ -20,20 +20,15 @@ In order to use this Python SDK, you must have an account with Pureport.  If
 you don't already have an account, you can sign up for one for free at
 https://console.pureport.com.
 
+.. _Contents:
 
-Installation
-------------
-The Pureport Fabric SDK can be installed using `pip <https://pip.pypa.io>`_::
+.. toctree::
+   :maxdepth: 1
 
-    $ pip install pureport-python
-
-The Pureport Fabric SDK can alternatively be installed directly from source for
-the latest code.  You can obtain the latest source code from `Github
-<https://github.com/pureport/pureport-fabric-sdk>`_::
-
-    $ git clone https://github.com/pureport/pureport-python
-    $ python setup.py install
-
+   installation
+   session
+   api
+   defaults
 
 
 Indices and tables
