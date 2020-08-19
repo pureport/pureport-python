@@ -18,12 +18,15 @@ the value based on the network name.
 """
 from __future__ import absolute_import
 
+import warnings
+
 from functools import (
     partial,
     update_wrapper
 )
 
 from pureport import api
+from pureport import defaults
 from pureport.helpers import first
 from pureport.exceptions import PureportError
 
@@ -72,8 +75,21 @@ def find_object(func, name, *args, **kwargs):
     return match
 
 
-find_connection = partial(find_object, api.find_connections)
-update_wrapper(find_connection, find_object)
+def make():
+    try:
+        find_connection = partial(find_object, api.find_connections)
+        update_wrapper(find_connection, find_object)
+        globals()['find_connection'] = find_connection
 
-find_network = partial(find_object, api.find_networks)
-update_wrapper(find_network, find_object)
+        find_network = partial(find_object, api.find_networks)
+        update_wrapper(find_network, find_object)
+        globals()['find_network'] = find_network
+
+    except AttributeError:
+        warnings.warn(
+            "query functions are unavailable until pureport.api.make() "
+            "is called to create bindings"
+        )
+
+if defaults.automake_bindings is True:
+    make()

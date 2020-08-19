@@ -56,6 +56,7 @@ from pureport.transforms import (
 
 from pureport import (
     models,
+    query,
     defaults
 )
 
@@ -208,6 +209,7 @@ def make():
                 func.__name__ = name
                 log.debug('adding function {}'.format(name))
                 globals()[name] = func
+    query.make()
 
 
 if defaults.automake_bindings is True:
