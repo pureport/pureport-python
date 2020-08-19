@@ -62,9 +62,6 @@ def get_api(session):
     if os.path.exists(defaults.openapi_file):
         log.debug("loading openapi spec from file {}".format(defaults.openapi_file))
         api_spec = json.loads(open(defaults.openapi_file).read())
-    elif os.path.exists(os.path.join(os.path.dirname(__file__), 'openapi.json')):
-        log.debug("loading openapi spec from embedded")
-        api_spec = json.loads(open(os.path.join(os.path.dirname(__file__), 'openapi.json')).read())
     else:
         log.debug("retrieving openapi spec from remote server")
         api_spec = session.get('/openapi.json')
