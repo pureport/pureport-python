@@ -33,7 +33,7 @@ release = __version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,24 +55,5 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
-
-def remove_cli_directives(*args, **kwargs):
-    def process(app, what, name, obj, options, lines):
-        deletes = list()
-        for index, item in enumerate(lines):
-            parts = item.split()
-            if parts and parts[0] in (":required", ":choices"):
-                print("deleted", item)
-                deletes.append(index)
-
-        deletes.reverse()
-        for index in deletes:
-            del lines[index]
-    return process
-
-
-def setup(app):
-    app.connect('autodoc-process-docstring', remove_cli_directives())
-    return app
