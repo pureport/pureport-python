@@ -47,6 +47,6 @@ jobs:
         run: |
           pytest --cov='pureport' --cov-append -v test/
         env:
-          PUREPORT_API_KEY=0
-          PUREPORT_API_SECRET=0
-          PUREPORT_AUTOMAKE_BINDINGS=0
+          PUREPORT_API_KEY: 0
+          PUREPORT_API_SECRET: 0
+          PUREPORT_AUTOMAKE_BINDINGS: 0
