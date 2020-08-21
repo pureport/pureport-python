@@ -95,7 +95,7 @@ def default():
 
     :raises: :class:`pureport.exceptions.PureportError`
     """
-    file_path = defaults.credentials_filepath
+    file_path = defaults.credentials_path
     file_name = defaults.credentials_filename
 
     for ext in ('yml', 'yaml', 'json'):
