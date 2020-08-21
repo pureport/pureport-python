@@ -196,6 +196,7 @@ def request(session, method, uri, *args, **kwargs):
 
 
 def make():
+    log.debug("attempting to make bindings for openapi spec")
     session = Session(*default())
     apispec = get_api(session)
 
