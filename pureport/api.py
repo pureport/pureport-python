@@ -105,16 +105,16 @@ def send_request(session, url, method='GET', status_codes=None, variables=None, 
     return response.json
 
 
-get = partial(send_request, method='GET', status_codes=[200])
+get = partial(send_request, method='GET', status_codes=(200,))
 update_wrapper(get, send_request)
 
-put = partial(send_request, method='PUT', status_codes=[200])
+put = partial(send_request, method='PUT', status_codes=(200,))
 update_wrapper(put, send_request)
 
-post = partial(send_request, method='POST', status_codes=[201])
+post = partial(send_request, method='POST', status_codes=(201,))
 update_wrapper(post, send_request)
 
-delete = partial(send_request, method='DELETE', status_codes=[200])
+delete = partial(send_request, method='DELETE', status_codes=(200,))
 update_wrapper(delete, send_request)
 
 
@@ -129,6 +129,7 @@ def request(session, method, uri, *args, **kwargs):
     """
     api = get_api(session)
 
+    method = method.lower()
     path = api['paths'][uri].get(method)
 
     if path is None:
@@ -197,6 +198,7 @@ def request(session, method, uri, *args, **kwargs):
 
 def make():
     log.debug("attempting to make bindings for openapi spec")
+
     session = Session(*default())
     apispec = get_api(session)
 
