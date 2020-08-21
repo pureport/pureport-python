@@ -1,5 +1,4 @@
 include README.md LICENSE.txt requirements.txt 
-recursive-include pureport openapi.json
 recursive-include test *
 recursive-include docs *
 recursive-exclude docs/_build *

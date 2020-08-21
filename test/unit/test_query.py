@@ -3,16 +3,13 @@
 # Copyright (c) 2020, Pureport, Inc.
 # All Rights Reserved
 
-import os
-
 from collections import namedtuple
+
+from unittest.mock import patch
 
 import pytest
 
 from ..utils import utils
-
-os.environ['PUREPORT_API_KEY'] = utils.random_string()
-os.environ['PUREPORT_API_SECRET'] = utils.random_string()
 
 from pureport import query
 from pureport.exceptions import PureportError
@@ -43,3 +40,15 @@ def test_find_object_by_name():
 def test_find_object_raises_exception():
     with pytest.raises(PureportError):
         query.find_object(function, utils.random_string())
+
+
+@patch.object(query, 'api')
+def test_query_functions_exist(mock_api):
+    mock_api.return_value = lambda: []
+
+    query.make()
+
+    assert hasattr(query, 'find_network')
+    assert callable(query.find_network)
+    assert hasattr(query, 'find_connection')
+    assert callable(query.find_connection)

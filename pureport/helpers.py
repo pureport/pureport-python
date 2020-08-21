@@ -10,13 +10,12 @@ various activties.
 """
 from __future__ import absolute_import
 
-import os
 import json
 import logging
 
 from functools import lru_cache
 
-from pureport import defaults
+from pureport.exceptions import PureportError
 
 
 log = logging.getLogger(__name__)
@@ -59,19 +58,11 @@ def first(val):
 
 @lru_cache(maxsize=16)
 def get_api(session):
-    if os.path.exists(defaults.openapi_file):
-        log.debug("loading openapi spec from file {}".format(defaults.openapi_file))
-        api_spec = json.loads(open(defaults.openapi_file).read())
-    elif os.path.exists(os.path.join(os.path.dirname(__file__), 'openapi.json')):
-        log.debug("loading openapi spec from embedded")
-        api_spec = json.loads(open(os.path.join(os.path.dirname(__file__), 'openapi.json')).read())
-    else:
-        log.debug("retrieving openapi spec from remote server")
-        api_spec = session.get('/openapi.json')
-        if defaults.cache_api_spec is True:
-            with open(defaults.openapi_file, 'w') as f:
-                f.write(json.dumps(api_spec))
-    return api_spec
+    log.debug("retrieving openapi spec from remote server")
+    api_spec = session.get('/openapi.json')
+    if api_spec.status != 200:
+        raise PureportError("unable to retrieve api spec")
+    return api_spec.json
 
 
 def get_value(path, obj):

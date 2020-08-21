@@ -44,10 +44,6 @@ from functools import (
     update_wrapper,
 )
 
-from pureport.helpers import (
-    get_api,
-    get_value
-)
 
 from pureport.transforms import (
     to_list,
@@ -56,8 +52,12 @@ from pureport.transforms import (
 
 from pureport import (
     models,
-    query,
     defaults
+)
+
+from pureport.helpers import (
+    get_api,
+    get_value
 )
 
 from pureport.session import Session
@@ -67,10 +67,8 @@ from pureport.exceptions import PureportError
 
 log = logging.getLogger(__name__)
 
-session = Session(*default())
 
-
-def send_request(session, method, url, status_codes=None, variables=None, **kwargs):
+def send_request(session, url, method='GET', status_codes=None, variables=None, **kwargs):
     """Sends a request to the Pureport REST API
 
     This function will invoke a HTTP method when calling the
@@ -91,7 +89,7 @@ def send_request(session, method, url, status_codes=None, variables=None, **kwar
     :returns: The HTTP response from the server
     :rtype: :class:`pureport.transport.Response`
     """
-    status_codes = to_list(status_codes) or [200]
+    status_codes = to_list(status_codes) or (200,)
 
     body = json.dumps(kwargs.get('body', {})) if kwargs else None
     url = url.format(**(variables or {}))
@@ -107,16 +105,16 @@ def send_request(session, method, url, status_codes=None, variables=None, **kwar
     return response.json
 
 
-get = partial(send_request, session, 'GET', status_codes=[200])
+get = partial(send_request, method='GET', status_codes=[200])
 update_wrapper(get, send_request)
 
-put = partial(send_request, session, 'PUT', status_codes=[200])
+put = partial(send_request, method='PUT', status_codes=[200])
 update_wrapper(put, send_request)
 
-post = partial(send_request, session, 'POST', status_codes=[201])
+post = partial(send_request, method='POST', status_codes=[201])
 update_wrapper(post, send_request)
 
-delete = partial(send_request, session, 'DELETE', status_codes=[200])
+delete = partial(send_request, method='DELETE', status_codes=[200])
 update_wrapper(delete, send_request)
 
 
@@ -180,8 +178,7 @@ def request(session, method, uri, *args, **kwargs):
             raise PureportError("missing required argument: {}".format(to_snake_case(p)))
 
     func = globals().get(method)
-
-    data = func(uri, body=body, variables=variables)
+    data = func(session, uri, body=body, variables=variables)
 
     schema = get_value('responses.default.content.application/json.schema', path)
     if schema:
@@ -199,8 +196,13 @@ def request(session, method, uri, *args, **kwargs):
 
 
 def make():
-    models.make(get_api(session))
-    for uri, properties in get_api(session)['paths'].items():
+    log.debug("attempting to make bindings for openapi spec")
+    session = Session(*default())
+    apispec = get_api(session)
+
+    models.make(apispec)
+
+    for uri, properties in apispec['paths'].items():
         for method, attrs in properties.items():
             if 'operationId' in attrs:
                 name = to_snake_case(attrs['operationId'])
@@ -209,7 +211,6 @@ def make():
                 func.__name__ = name
                 log.debug('adding function {}'.format(name))
                 globals()[name] = func
-    query.make()
 
 
 if defaults.automake_bindings is True:

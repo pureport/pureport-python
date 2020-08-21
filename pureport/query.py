@@ -91,5 +91,6 @@ def make():
             "is called to create bindings"
         )
 
+
 if defaults.automake_bindings is True:
     make()
