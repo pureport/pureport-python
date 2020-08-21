@@ -95,14 +95,6 @@ ACCOUNT_ID = config_item(
 )
 
 
-CACHE_API_SPEC = config_item(
-    description="Enable or disable caching the OpenAPI spec",
-    default=False,
-    env="PUREPORT_CACHE_API_SPEC",
-    transform=transforms.to_bool
-)
-
-
 WORKING_DIR = config_item(
     description="Local Pureport working directory",
     default=os.path.expanduser('~/.pureport'),
