@@ -5,11 +5,19 @@
 
 import json
 
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
+from collections import namedtuple
+from functools import partial
+
+import pytest
 
 from pureport import helpers
+from pureport.exceptions import PureportError
 
 from ..utils import utils
+
+SentinelResponse = namedtuple('SentinelResponse', ('status', 'data', 'headers', 'json'))
+response = partial(SentinelResponse, status=200, data=None, headers=None, json=None)
 
 
 @patch('builtins.print')
@@ -45,6 +53,13 @@ def test_first():
     assert helpers.first([]) == []
     assert helpers.first(None) is None
     assert helpers.first(text) == text
+
+
+def test_get_api():
+    mock_session = MagicMock()
+    mock_session.return_value = response(status=400)
+    with pytest.raises(PureportError):
+        helpers.get_api(mock_session)
 
 
 def test_get_value():
