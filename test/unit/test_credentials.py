@@ -25,7 +25,7 @@ def test_load_from_environment(mock_defaults):
     api_url = utils.random_string()
 
     with utils.tempdir() as tmpdir:
-        mock_defaults.credentials_filepath = tmpdir
+        mock_defaults.credentials_path = tmpdir
         mock_defaults.credentials_filename = 'credentials'
 
     mock_defaults.api_key = api_key
@@ -65,7 +65,7 @@ def test_load_from_file(mock_defaults):
             with open(os.path.join(tmpdir, filename), 'w') as f:
                 f.write(serializer(content))
 
-            mock_defaults.credentials_filepath = tmpdir
+            mock_defaults.credentials_path = tmpdir
             mock_defaults.credentials_filename = 'credentials'
 
             mock_defaults.api_key = api_key
@@ -100,7 +100,7 @@ def test_missing_required_values(mock_defaults):
             with open(os.path.join(tmpdir, filename), 'w') as f:
                 f.write(serializer(content))
 
-            mock_defaults.credentials_filepath = tmpdir
+            mock_defaults.credentials_path = tmpdir
             mock_defaults.credentials_filename = 'credentials'
             mock_defaults.api_key = None
             mock_defaults.api_secret = None
@@ -112,7 +112,7 @@ def test_missing_required_values(mock_defaults):
 @patch.object(credentials, 'defaults')
 def test_no_credentials(mock_defaults):
     with utils.tempdir() as tmpdir:
-        mock_defaults.credentials_filepath = tmpdir
+        mock_defaults.credentials_path = tmpdir
         mock_defaults.credentials_filename = 'credentials'
         mock_defaults.api_key = None
         mock_defaults.api_secret = None
