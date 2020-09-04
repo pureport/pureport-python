@@ -17,3 +17,7 @@ docs:
 	cd docs && make clean
 	cd docs && sphinx-apidoc ../pureport -o . -f
 	cd docs && PUREPORT_AUTOMAKE_BINDINGS=0 make html
+
+
+build: clean
+	python setup.py sdist bdist_wheel
