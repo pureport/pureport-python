@@ -1,4 +1,4 @@
-# Pureport Python Client
+# Pureport Python SDK
 
 ![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg)
 

@@ -59,7 +59,7 @@ from logging import NullHandler
 from pureport import defaults
 
 
-__version__ = "0.0.0-alpha"
+__version__ = "0.1.0"
 
 __author__ = "Pureport, Inc"
 __license__ = "MIT"
