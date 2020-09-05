@@ -19,7 +19,7 @@ from pureport import __version__
 
 # -- Project information -----------------------------------------------------
 
-project = 'Pureport Python Client'
+project = 'Pureport Python SDK'
 copyright = '2020, Pureport, Inc'
 author = 'Pureport, Inc'
 
