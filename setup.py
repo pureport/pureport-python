@@ -27,7 +27,7 @@ def main():
         long_description_content_type="text/markdown",
         classifiers=[
             "Environment :: Web Environment",
-            "intended Audience :: Developers",
+            "Intended Audience :: Developers",
             "License :: OSI Approved :: MIT License",
             "Operating System :: OS Independent",
             "Programming Language :: Python",
