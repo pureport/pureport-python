@@ -114,7 +114,7 @@ class Request(object):
             "read_timeout={})".format(connect_timeout, read_timeout)
         )
 
-    def __call__(self, method, url, body=None, headers=None):
+    def __call__(self, method, url, body=None, headers=None, query=None):
         """Sends the HTTP request
 
         :param method: HTTP method
@@ -129,6 +129,9 @@ class Request(object):
         :param headers: HTTP headers
         :type headers: dict
 
+        :param query: HTTP query string
+        :type query: dict
+
         :return: HTTP Response
         :rtype: :class:`Response`
         """
@@ -136,7 +139,7 @@ class Request(object):
             log.debug("Sending request to remote server")
             log.debug("method={}, url={}".format(method, url))
             log.debug("headers={}".format(','.join(headers or {})))
-            resp = self.http.request(method, url, body=body, headers=headers)
+            resp = self.http.request(method, url, body=body, headers=headers, fields=query)
         except (HTTPError, TimeoutError) as exc:
             message = getattr(exc, 'message', None) or \
                     defaults.generic_transport_error_message

@@ -68,7 +68,7 @@ from pureport.exceptions import PureportError
 log = logging.getLogger(__name__)
 
 
-def send_request(session, url, method='GET', status_codes=None, variables=None, **kwargs):
+def send_request(session, url, method='GET', status_codes=None, variables=None, query=None, **kwargs):
     """Sends a request to the Pureport REST API
 
     This function will invoke a HTTP method when calling the
@@ -95,7 +95,7 @@ def send_request(session, url, method='GET', status_codes=None, variables=None, 
     url = url.format(**(variables or {}))
 
     log.debug("calling session with url {}".format(url))
-    response = session(method, url, body=body)
+    response = session(method, url, body=body, query=query)
 
     if response.status not in status_codes:
         raise PureportError("invalid status code received from response")
@@ -136,9 +136,12 @@ def request(session, method, uri, *args, **kwargs):
         raise PureportError("method {} not supported for uri {}".format(method, uri))
 
     parameters = list()
+    query = {}
     for item in path.get('parameters', []):
         if item.get('in', 'path') == 'path' and item.get('required', True) is True:
             parameters.append(item['name'])
+        elif item.get('in') == 'query':
+            query[to_snake_case(item['name'])] = None
 
     cls = None
 
@@ -154,6 +157,12 @@ def request(session, method, uri, *args, **kwargs):
         cls = getattr(models, clsname, None)
         log.debug("connection class is {}".format(cls))
         parameters.append('model')
+
+    query_values = kwargs.pop('query', None)
+    if query_values:
+        # TODO need to validate query inputs against api spec
+        if not set(query_values).issubset(query):
+            raise PureportError("unknown query value provided")
 
     variables = dict(zip(parameters, args))
 
@@ -179,7 +188,7 @@ def request(session, method, uri, *args, **kwargs):
             raise PureportError("missing required argument: {}".format(to_snake_case(p)))
 
     func = globals().get(method)
-    data = func(session, uri, body=body, variables=variables)
+    data = func(session, uri, body=body, variables=variables, query=query_values)
 
     schema = get_value('responses.default.content.application/json.schema', path)
     if schema:
