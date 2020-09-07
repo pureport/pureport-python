@@ -17,7 +17,7 @@ SentinelResponse = namedtuple('SentinelResponse', ('status', 'data', 'headers', 
 response = partial(SentinelResponse, status=200, data=None, headers=None, json=None)
 
 
-def generate_response(method, url, body=None, headers=None):
+def generate_response(method, url, body=None, headers=None, query=None):
     if url == '/openapi.json':
         basepath = os.path.dirname(__file__)
         content = open(os.path.join(basepath, '../openapi.json')).read()

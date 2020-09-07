@@ -88,7 +88,7 @@ class Session(Request):
                 return True
         return False
 
-    def __call__(self, method, url, body=None, headers=None):
+    def __call__(self, method, url, body=None, headers=None, query=None):
         """Manages the sending and receiving of requests
 
         This method provides some additional capabilities built
@@ -111,6 +111,9 @@ class Session(Request):
             HTTP headers
         :type headers: dict
 
+        :param query: Key/value pairs used to construct the query string
+        :type query: dict
+
         :return: Instance of Response
         :rtype: :class:`pureport.transport.Response`
         """
@@ -132,7 +135,7 @@ class Session(Request):
 
         log.debug("sending request to {}".format(self.base_url))
         log.debug("body={}".format(body))
-        resp = super(Session, self).__call__(method, url, body, headers)
+        resp = super(Session, self).__call__(method, url, body, headers, query=query)
         log.debug("received valid response, returning to calling function")
         return resp
 
@@ -161,7 +164,7 @@ class Session(Request):
 
         self.authorization_expiration = time.time() + data['expires_in']
 
-    def get(self, url, body=None, headers=None):
+    def get(self, url, body=None, headers=None, query=None):
         """ HTTP GET method
 
         :param url: Fully qualified HTTP URL
@@ -173,12 +176,15 @@ class Session(Request):
         :param headers: Optional HTTP headers
         :type headers: dict
 
+        :param query: Optional HTTP query string
+        :type field: dict
+
         :return: HTTP Response object
         :rtype: :class:`pureport.transport.Response`
         """
-        return self.__call__('GET', url, body=body, headers=headers)
+        return self.__call__('GET', url, body=body, headers=headers, query=query)
 
-    def post(self, url, body=None, headers=None):
+    def post(self, url, body=None, headers=None, query=None):
         """ HTTP POST method
 
         :param url: Fully qualified HTTP URL
@@ -190,12 +196,15 @@ class Session(Request):
         :param headers: Optional HTTP headers
         :type headers: dict
 
+        :param query: Optional HTTP query string
+        :type field: dict
+
         :return: HTTP Response object
         :rtype: :class:`pureport.transport.Response`
         """
-        return self.__call__('POST', url, body=body, headers=headers)
+        return self.__call__('POST', url, body=body, headers=headers, query=query)
 
-    def put(self, url, body=None, headers=None):
+    def put(self, url, body=None, headers=None, query=None):
         """ HTTP PUT method
 
         :param url: Fully qualified HTTP URL
@@ -207,12 +216,15 @@ class Session(Request):
         :param headers: Optional HTTP headers
         :type headers: dict
 
+        :param query: Optional HTTP query string
+        :type field: dict
+
         :return: HTTP Response object
         :rtype: :class:`pureport.transport.Response`
         """
-        return self.__call__('PUT', url, body=body, headers=headers)
+        return self.__call__('PUT', url, body=body, headers=headers, query=query)
 
-    def delete(self, url, body=None, headers=None):
+    def delete(self, url, body=None, headers=None, query=None):
         """ HTTP DELETE method
 
         :param url: Fully qualified HTTP URL
@@ -224,10 +236,13 @@ class Session(Request):
         :param headers: Optional HTTP headers
         :type headers: dict
 
+        :param query: Optional HTTP query string
+        :type query: dict
+
         :return: HTTP Response object
         :rtype: :class:`pureport.transport.Response`
         """
-        return self.__call__('DELETE', url, body=body, headers=headers)
+        return self.__call__('DELETE', url, body=body, headers=headers, query=query)
 
     def options(self, url, body=None, headers=None):
         """ HTTP OPTIONS method

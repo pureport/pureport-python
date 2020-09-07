@@ -31,7 +31,7 @@ def test_default(mock_request):
     req = pureport.transport.Request()
     url = utils.random_string()
     resp = req('GET', url)
-    mock_request.assert_called_with('GET', url, body=None, headers=None)
+    mock_request.assert_called_with('GET', url, body=None, headers=None, fields=None)
     assert resp.status == 200
     assert resp.data is None
     assert resp.json is None
@@ -44,7 +44,7 @@ def test_methods_with_body(mock_request):
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None)
+    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
     assert resp.status == 200
     assert resp.data is None
     assert resp.json is None
@@ -58,7 +58,7 @@ def test_methods_return_data(mock_request):
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None)
+    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
     assert resp.status == 200
     assert resp.data == response_data
     assert resp.json is None
@@ -72,7 +72,7 @@ def test_methods_return_data_and_json(mock_request):
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, body=data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None)
+    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
     assert resp.status == 200
     assert resp.data == response_data
     assert resp.json == json.loads(response_data)
