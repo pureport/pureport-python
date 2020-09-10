@@ -52,6 +52,72 @@ class Enum(Schema):
     values = property(lambda self: self._properties.get('enum', []))
 
 
+def describe(model, readwrite=False, required=False):
+    """Returns a complete data structure for a model
+
+    This function accepts two filter keyword arguments for
+    controlling the returned data structure.
+
+    If the `readwrite` argument is set to True, then the response will
+    only include fields that are read/write fields.  If set to
+    False (default), then all fields are included.
+
+    If the `required` argument is set to True, then the response will
+    only include required fields to create a new object.  If the
+    value is False (default), all fields are returned.
+
+    :param model: the name of the model to construct
+    :type model: str
+
+    :param readwrite: filter the returned properties to readwrite fields only
+    :type readwrite: bool
+
+    :param required: filter the returned properties to only required fields
+    :type required: bool
+
+    :returns: a fully constructed object
+    :rtype: dict
+    """
+    cls = globals().get(model)
+    schema = cls._schema
+
+    properties = {}
+
+    if isinstance(schema, Model):
+        for key, value in schema.parents.items():
+            properties.update(describe(key, readwrite, required))
+
+    if isinstance(schema, Enum):
+        properties.update({
+            'type': 'Enum',
+            'items': schema.type,
+            'values': schema.values
+        })
+        return properties
+
+    elif isinstance(schema, Model):
+        for item in schema.properties:
+            if readwrite is False or (readwrite is True and schema.properties[item].get('readOnly', False) is False):
+                if not required or (required and item in schema.required):
+                    if '$ref' in schema.properties[item]:
+                        ref = schema.properties[item]['$ref'].split('/')[-1]
+                        value = describe(ref, readwrite, required)
+                        value.update({
+                            'required': item in schema.required,
+                            'readonly': schema.properties[item].get('readOnly', False),
+                            'ref': ref
+                        })
+                        properties[item] = value
+                    else:
+                        properties[item] = {
+                            'type': schema.properties[item].get('type', 'string'),
+                            'required': item in schema.required,
+                            'readonly': schema.properties[item].get('readOnly', False)
+                        }
+
+    return properties
+
+
 def dump(obj):
     """Deserialize model to a Python dict
 
