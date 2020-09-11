@@ -276,7 +276,7 @@ def _set_property(self, value, name):
 
     if this is None and self._schema.base:
         for item in self._schema.base:
-            this = self._schema.parents[item].propertes.get(name)
+            this = self._schema.parents[item].properties.get(name)
             if this:
                 break
         else:
