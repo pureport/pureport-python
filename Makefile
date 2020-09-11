@@ -2,7 +2,7 @@
 clean:
 	if [ -d build ]; then rm -rf build; fi
 	if [ -d dist ]; then rm -rf dist; fi
-	if [ -d pureport.egg-info ]; then rm -rf pureport.egg-info; fi
+	if [ -d pureport_python.egg-info ]; then rm -rf pureport_python.egg-info; fi
 	find . -name '*.pyc' -delete
 	find . -name '__pycache__' -delete
 	cd docs && make clean
