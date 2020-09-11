@@ -89,9 +89,8 @@ def describe(model, readwrite=False, required=False):
 
     if isinstance(schema, Enum):
         properties.update({
-            'type': 'Enum',
-            'items': schema.type,
-            'values': schema.values
+            'type': schema.type,
+            'enum': schema.values,
         })
         return properties
 
@@ -102,12 +101,23 @@ def describe(model, readwrite=False, required=False):
                     if '$ref' in schema.properties[item]:
                         ref = schema.properties[item]['$ref'].split('/')[-1]
                         value = describe(ref, readwrite, required)
-                        value.update({
-                            'required': item in schema.required,
-                            'readonly': schema.properties[item].get('readOnly', False),
-                            'ref': ref
-                        })
-                        properties[item] = value
+
+                        if 'enum' in value:
+                            value.update({
+                                'required': item in schema.required,
+                                'readonly': schema.properties[item].get('readOnly', False),
+                                'ref': ref
+                            })
+                            properties[item] = value
+
+                        else:
+                            properties[item] = {
+                                'items': value,
+                                'required': item in schema.required,
+                                'readonly': schema.properties[item].get('readOnly', False),
+                                'ref': ref,
+                                'type': schema.properties[item].get('type', 'object')
+                            }
                     else:
                         properties[item] = {
                             'type': schema.properties[item].get('type', 'string'),

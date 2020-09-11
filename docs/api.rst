@@ -69,6 +69,34 @@ The return value from the bound function `find_all_accounts()` will return an
 instance of a Model object. The next section will discuss models.
 
 
+Disabling bindings
+------------------
+
+Bindings are created by default the first time `pureport.api` is imported into
+your application.  Sometimes, this is not the desired behavior.  You can
+disable the bindings from being automatically created by setting the following
+environment variable
+
+    .. code-block:: bash
+
+        export PUREPORT_AUTOMAKE_BINDINGS=0
+
+When the `PUREPORT_AUTOMATKE_BINDINGS` is set to False, the bindings are not
+automatically generated at import time.  You can still manually call `make()`
+to create bindings.
+
+    .. code-block:: python
+
+        >>> from pureport import api
+        >>> api.find_all_accounts()
+        Traceback (most recent call last):
+          File "<stdin>", line 1, in <module>
+        AttributeError: module 'pureport.api' has no attribute 'find_all_accounts'
+        >>> api.make()
+        >>> api.find_all_accounts()
+        [<pureport.models.Account object at 0x7fc167b535e0>, <pureport.models.Account object at 0x7fc167b53760>]
+
+
 Using models
 ------------
 
@@ -270,4 +298,221 @@ like the example below.
         <pureport.models.Network object at 0x7fc393cb04f0>
 
 
+Introspecting with describe()
+-----------------------------
 
+The `describe()` function provides a way to introspect a model to generate
+the entire model's schema.  It handles creating the full schema including any
+parents as well as reference links.  The `describe()` function provides a quick
+way to understand a model without having to comb thorugh the OpenAPI
+specification.
+
+For example, let's assume we want to review the `Network` model schema.
+
+    .. code-block:: python
+
+        >>> import json
+        >>> from pureport import api
+        >>> schema = api.models.describe('Network'), indent=4, sort_keys=True)
+        >>> print(json.dumps(schema))
+        {
+            "account": {
+                "items": {
+                    "href": {
+                        "readonly": false,
+                        "required": true,
+                        "type": "string"
+                    },
+                    "id": {
+                        "readonly": false,
+                        "required": false,
+                        "type": "string"
+                    },
+                    "title": {
+                        "readonly": false,
+                        "required": false,
+                        "type": "string"
+                    }
+                },
+                "readonly": false,
+                "ref": "Link",
+                "required": false,
+                "type": "object"
+            },
+            "description": {
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "href": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "id": {
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "name": {
+                "readonly": false,
+                "required": true,
+                "type": "string"
+            },
+            "os_primary_controller_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "os_private_network_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "os_project_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "os_secondary_controller_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "primary_controller_external_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "secondary_controller_external_id": {
+                "readonly": true,
+                "required": false,
+                "type": "string"
+            },
+            "state": {
+                "enum": [
+                    "PENDING",
+                    "PROVISIONING",
+                    "PENDING_CONTROLLERS",
+                    "DELETING_CONTROLLERS",
+                    "PROVISIONING_CONTROLLERS",
+                    "ACTIVE",
+                    "DELETING",
+                    "DELETED",
+                    "ERROR"
+                ],
+                "readonly": false,
+                "ref": "NetworkState",
+                "required": false,
+                "type": "string"
+            },
+            "tags": {
+                "readonly": false,
+                "required": false,
+                "type": "object"
+            },
+            "test_network": {
+                "readonly": false,
+                "required": false,
+                "type": "boolean"
+            }
+        }
+
+
+The output above provides the entire schema for the `Network` model.  The
+`describe()` function also provides some filters to allow you to return only
+properties that are read/write and/or fields that are required.
+
+For instance, let's assume we want to only see the fields of the `Network`
+model that are read/write.  We can set the `readwrite` keyword argument to
+True.
+
+    .. code-block:: python
+
+        >>> schema = api.models.describe('Network', readwrite=True), indent=4, sort_keys=True)
+        >>> print(json.dumps(schema, indent=4, sort_keys=True))
+        {
+            "account": {
+                "items": {
+                    "href": {
+                    "readonly": false,
+                    "required": true,
+                    "type": "string"
+                    },
+                    "id": {
+                    "readonly": false,
+                    "required": false,
+                    "type": "string"
+                    },
+                    "title": {
+                    "readonly": false,
+                    "required": false,
+                    "type": "string"
+                    }
+                },
+                "readonly": false,
+                "ref": "Link",
+                "required": false,
+                "type": "object"
+            },
+            "description": {
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "id": {
+                "readonly": false,
+                "required": false,
+                "type": "string"
+            },
+            "name": {
+                "readonly": false,
+                "required": true,
+                "type": "string"
+            },
+            "state": {
+                "enum": [
+                    "PENDING",
+                    "PROVISIONING",
+                    "PENDING_CONTROLLERS",
+                    "DELETING_CONTROLLERS",
+                    "PROVISIONING_CONTROLLERS",
+                    "ACTIVE",
+                    "DELETING",
+                    "DELETED",
+                    "ERROR"
+                ],
+                "readonly": false,
+                "ref": "NetworkState",
+                "required": false,
+                "type": "string"
+            },
+            "tags": {
+                "readonly": false,
+                "required": false,
+                "type": "object"
+            },
+            "test_network": {
+                "readonly": false,
+                "required": false,
+                "type": "boolean"
+            }
+        }
+
+We can also return just the required fields by setting the functions `required`
+keyword argument to True.
+
+    .. code-block:: python
+
+        >>> schema = api.models.describe('Network', readwrite=True, required=True), indent=4, sort_keys=True)
+        >>> print(json.dumps(schema))
+        {
+            "name": {
+                "readonly": false,
+                "required": true,
+                "type": "string"
+            }
+        }
+
+The `describe()` function helps simply working with the Pureport models by
+providing a convenient way to introspect model schema.
