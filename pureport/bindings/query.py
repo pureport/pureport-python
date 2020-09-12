@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2020, Pureport, Inc.
 # All Rights Reserved
-
+#
 """
 The query model provides a set of convience functions for querying
 the Pureport API to find objects.  It supplements the functions
@@ -16,17 +16,12 @@ exists) based on the required argument `network_id`.  Since the
 value of `network_id` is not immediately known, we can lookup
 the value based on the network name.
 """
-from __future__ import absolute_import
-
-import warnings
 
 from functools import (
     partial,
     update_wrapper
 )
 
-from pureport import api
-from pureport import defaults
 from pureport.helpers import first
 from pureport.exceptions import PureportError
 
@@ -75,22 +70,17 @@ def find_object(func, name, *args, **kwargs):
     return match
 
 
-def make():
-    try:
-        find_connection = partial(find_object, api.find_connections)
-        update_wrapper(find_connection, find_object)
-        globals()['find_connection'] = find_connection
+def make(session):
+    for f in ('find_connections', 'find_networks'):
+        if not hasattr(session, f):
+            raise PureportError(
+                "cannot bind query function, missing {}".format(f)
+            )
 
-        find_network = partial(find_object, api.find_networks)
-        update_wrapper(find_network, find_object)
-        globals()['find_network'] = find_network
+    find_connection = partial(find_object, session.find_connections)
+    update_wrapper(find_connection, find_object)
+    setattr(session, 'find_connection', find_connection)
 
-    except AttributeError:
-        warnings.warn(
-            "query functions are unavailable until pureport.api.make() "
-            "is called to create bindings"
-        )
-
-
-if defaults.automake_bindings is True:
-    make()
+    find_network = partial(find_object, session.find_networks)
+    update_wrapper(find_network, find_object)
+    setattr(session, 'find_network', find_network)

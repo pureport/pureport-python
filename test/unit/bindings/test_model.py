@@ -6,9 +6,11 @@
 import os
 import json
 
-from ..utils import utils
+from unittest.mock import patch, Mock
 
-from pureport import models
+from ...utils import utils
+
+from pureport.bindings import models
 
 
 def make_schema():
@@ -26,15 +28,29 @@ def make_schema():
     }
 
 
-def test_models_make():
+@patch.object(models, 'get_api')
+def test_models_make(mock_get_api):
     basepath = os.path.dirname(__file__)
-    content = json.loads(open(os.path.join(basepath, '../openapi.json')).read())
-    models.make(content)
+
+    content = json.loads(
+        open(os.path.join(basepath, '../../openapi.json')).read()
+    )
+
+    mock_get_api.return_value = content
+
+    session = Mock()
+
+    models.make(session)
     assert set(content['components']['schemas']).issubset(dir(models))
 
 
-def test_models_dump():
-    models.make({'components': {'schemas': make_schema()}})
+@patch.object(models, 'get_api')
+def test_models_dump(mock_get_api):
+    content = {'components': {'schemas': make_schema()}}
+    mock_get_api.return_value = content
+
+    session = Mock()
+    models.make(session)
 
     assert hasattr(models.TestSchema, 'camel_case')
     assert hasattr(models.TestSchema, 'snake_case')
@@ -54,11 +70,16 @@ def test_models_dump():
     delattr(models, 'TestSchema')
 
 
-def test_models_load():
+@patch.object(models, 'get_api')
+def test_models_load(mock_get_api):
     camel_case_value = utils.random_string()
     snake_case_value = utils.random_string()
 
-    models.make({'components': {'schemas': make_schema()}})
+    content = {'components': {'schemas': make_schema()}}
+    mock_get_api.return_value = content
+
+    session = Mock()
+    models.make(session)
 
     data = {'camel_case': camel_case_value, 'snake_case': snake_case_value}
     resp = models.load('TestSchema', data)
