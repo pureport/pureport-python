@@ -3,6 +3,7 @@
 
   * Added describe() function to recreate entire model schema
   * Fixed documentation formating issue (#16)
+  * Remove unused setting `pureport.defaults.account_id`
  
 
 0.2.0 / 2020-09-07
