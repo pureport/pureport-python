@@ -32,10 +32,10 @@ from __future__ import absolute_import
 import json
 import time
 import logging
+import importlib
 
 from urllib.parse import urljoin
 
-from pureport import make_bindings
 from pureport import defaults
 from pureport.transport import Request
 
@@ -79,7 +79,7 @@ class Session(Request):
         super(Session, self).__init__()
 
         if automake_bindings is True:
-            make_bindings(self)
+            self.make_bindings()
 
     @property
     def authorized(self):
@@ -181,6 +181,17 @@ class Session(Request):
         }
 
         self.authorization_expiration = time.time() + data['expires_in']
+
+    def make_bindings(self):
+        """Generate Python bindings from Pureport REST API
+
+        Generages the Python language bindings and adds them to this
+        instance of `Session`.  This method only needs to be called
+        once to add the language bindings to the object
+        """
+        for item in ('models', 'functions', 'query'):
+            mod = importlib.import_module('pureport.{}'.format(item))
+            mod.make(self)
 
     def get(self, url, body=None, headers=None, query=None):
         """ HTTP GET method

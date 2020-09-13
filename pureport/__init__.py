@@ -57,9 +57,6 @@ import logging
 from logging import NullHandler
 
 from pureport import defaults
-from pureport import functions
-from pureport import models
-from pureport import query
 
 
 __version__ = "0.3.0-dev"
@@ -99,24 +96,3 @@ def set_logging(level):
 
 
 set_logging(defaults.logging_level)
-
-
-def make_bindings(session):
-    """Generate bindings for OpenAPI specification
-
-    This function will generate all model, functions and query bindings
-    for the OpenAPI specificaiton retrieved from the server.  The generated
-    functions and queries will be attached to the session instance.
-
-    The models only get generated the first time this function is called.
-    Subsequent calls to this function will not regenerate the model
-    bindings; however, the functions and queries are generated and
-    attached to the session instance.
-
-    :param session: an instance of a Session object
-    :type session: `pureport.session.Session`
-
-    :returns: None
-    """
-    for item in (models, functions, query):
-        item.make(session)

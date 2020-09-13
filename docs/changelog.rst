@@ -12,6 +12,8 @@ v0.3.0 / (in progress)
   * Automatically inject session account id into function arguments
   * Remove `pureport.defaults.automake_bindings` setting
   * Add automake_bindings keyword argument to session init
+  * The `make_bindings()` function is now a session method
+  * Create session object to make models if no session is passed
 
 
 v0.2.0 / 2020-09-07
