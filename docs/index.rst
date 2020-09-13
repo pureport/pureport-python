@@ -29,6 +29,7 @@ https://console.pureport.com.
    session
    bindings
    defaults
+   changelog
 
 
 Indices and tables
