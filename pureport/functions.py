@@ -42,7 +42,7 @@ import logging
 from functools import partial
 from functools import update_wrapper
 
-from pureport.bindings import models
+from pureport import models
 from pureport.transforms import to_list
 from pureport.transforms import to_snake_case
 from pureport.helpers import get_api

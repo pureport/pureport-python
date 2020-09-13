@@ -23,8 +23,8 @@ from functools import partial
 from functools import lru_cache
 
 from pureport.transforms import to_snake_case
-from pureport.exceptions import PureportError
 from pureport.helpers import get_api
+from pureport.exceptions import PureportError
 
 
 log = logging.getLogger(__name__)
