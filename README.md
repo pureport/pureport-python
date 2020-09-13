@@ -1,6 +1,7 @@
 # Pureport Python SDK
 
-![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg)
+![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pureport-python/badge/?version=latest)](https://pureport-python.readthedocs.io/en/latest/?badge=latest)
+
 
 The Pureport Python Client provides a Python programmatic interface to the 
 Pureport REST API.  The Pureport Python Client is predominately a session and 
