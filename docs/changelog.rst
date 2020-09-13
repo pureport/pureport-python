@@ -1,8 +1,8 @@
 Changelog
 =========
 
-v0.3.0 / (in progress)
-----------------------
+v0.3.0 / 2020-09-13
+-------------------
 
   * Added describe() function to recreate entire model schema
   * Fixed documentation formating issue (#16)

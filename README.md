@@ -72,7 +72,6 @@ when you create a new instance of `Sesssion`.  To add bindings to a
 ```
    from pureport.session import Session
    from pureport.credentials import default
-   from pureport import make_bindings
 
    session = Session(*default())
    session.make_bindings()
