@@ -50,14 +50,6 @@ API_SECRET = config_item(
 )
 
 
-AUTOMAKE_BINDINGS = config_item(
-    description="Automatically run make() for API bindings",
-    default=True,
-    transform=transforms.to_bool,
-    env="PUREPORT_AUTOMAKE_BINDINGS"
-)
-
-
 CREDENTIALS_FILENAME = config_item(
     description="Name of the file to use for looking up credentials",
     default="credentials"

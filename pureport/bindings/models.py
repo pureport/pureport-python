@@ -20,9 +20,11 @@ import logging
 
 from keyword import iskeyword
 from functools import partial
+from functools import lru_cache
 
 from pureport.transforms import to_snake_case
 from pureport.exceptions import PureportError
+from pureport.helpers import get_api
 
 
 log = logging.getLogger(__name__)
@@ -406,7 +408,11 @@ class StrictBase(Base):
                 raise ValueError(msg)
 
 
-def make(schemas):
+@lru_cache(maxsize=16)
+def make(session):
+    log.debug("generating bindings for models")
+    schemas = get_api(session)
+
     schemas = load_api(schemas)
     models = list()
 
