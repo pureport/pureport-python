@@ -35,8 +35,8 @@ import logging
 
 from urllib.parse import urljoin
 
+from pureport import make_bindings
 from pureport import defaults
-from pureport import bindings
 from pureport.transport import Request
 
 log = logging.getLogger(__name__)
@@ -79,7 +79,7 @@ class Session(Request):
         super(Session, self).__init__()
 
         if automake_bindings is True:
-            bindings.make(self)
+            make_bindings(self)
 
     @property
     def authorized(self):

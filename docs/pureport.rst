@@ -4,14 +4,6 @@ pureport package
 Submodules
 ----------
 
-pureport.api module
--------------------
-
-.. automodule:: pureport.api
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pureport.credentials module
 ---------------------------
 
@@ -32,6 +24,14 @@ pureport.exceptions module
 --------------------------
 
 .. automodule:: pureport.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+pureport.functions module
+-------------------------
+
+.. automodule:: pureport.functions
    :members:
    :undoc-members:
    :show-inheritance:

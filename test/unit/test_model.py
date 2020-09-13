@@ -8,9 +8,9 @@ import json
 
 from unittest.mock import patch, Mock
 
-from ...utils import utils
+from ..utils import utils
 
-from pureport.bindings import models
+from pureport import models
 
 
 def make_schema():
@@ -33,7 +33,7 @@ def test_models_make(mock_get_api):
     basepath = os.path.dirname(__file__)
 
     content = json.loads(
-        open(os.path.join(basepath, '../../openapi.json')).read()
+        open(os.path.join(basepath, '../openapi.json')).read()
     )
 
     mock_get_api.return_value = content

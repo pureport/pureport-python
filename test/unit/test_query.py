@@ -9,9 +9,9 @@ from unittest.mock import Mock
 
 import pytest
 
-from ...utils import utils
+from ..utils import utils
 
-from pureport.bindings import query
+from pureport import query
 from pureport.session import Session
 from pureport.exceptions import PureportError
 
