@@ -65,12 +65,30 @@ convenience methods for sending requests to the server.
 ```
 
 The library also provides a set of functional bindings to the Pureport
-API using the OpenAPI spec file.  To use the functional bindings, 
-import the API module and call the function directly.
+API using the OpenAPI spec file.  Bindings are not enabled by default 
+when you create a new instance of `Sesssion`.  To add bindings to a
+`Session` object, call `make_bindings()`. 
 
 ```
-   from pureport import api
-   api.find_all_accounts()
+   from pureport.session import Session
+   from pureport.credentials import default
+   from pureport import make_bindings
+
+   session = Session(*default())
+   make_bindings(session)
+ 
+   session.find_all_accounts()
+```
+
+Alternatively you can also enable bindings to be created at session
+initialization.
+
+```
+   from pureport.session import Session
+   from pureport.credentials import default
+
+   session = Session(*default(), automake_bindings=True)
+   session.find_all_accounts()
 ```
 
 For details and documentation of the Pureport Fabric API, please check 
