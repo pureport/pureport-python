@@ -48,7 +48,7 @@ def main():
         author_email="info@pureport.com",
         url="https://www.pureport.com",
         project_urls={
-            "Documentation": "https://pureport.readthedocs.io",
+            "Documentation": "https://pureport-python.readthedocs.io",
             "Code": "https://github.com/pureport/pureport-python",
             "Issue tracker": "https://github.com/pureport/pureport-python/issues"
         },
