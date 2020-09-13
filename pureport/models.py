@@ -24,7 +24,10 @@ from functools import lru_cache
 
 from pureport.transforms import to_snake_case
 from pureport.helpers import get_api
+from pureport.helpers import get_value
 from pureport.exceptions import PureportError
+from pureport.session import Session
+from pureport.credentials import default
 
 
 log = logging.getLogger(__name__)
@@ -409,9 +412,13 @@ class StrictBase(Base):
 
 
 @lru_cache(maxsize=16)
-def make(session):
+def make(session=None):
     log.debug("generating bindings for models")
+
+    session = session or Session(*default())
+
     schemas = get_api(session)
+    globals()['__version__'] = get_value('info.version', schemas)
 
     schemas = load_api(schemas)
     models = list()

@@ -75,7 +75,7 @@ when you create a new instance of `Sesssion`.  To add bindings to a
    from pureport import make_bindings
 
    session = Session(*default())
-   make_bindings(session)
+   session.make_bindings()
  
    session.find_all_accounts()
 ```

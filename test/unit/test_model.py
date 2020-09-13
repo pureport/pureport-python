@@ -87,5 +87,3 @@ def test_models_load(mock_get_api):
     assert isinstance(resp, models.TestSchema)
     assert resp.camel_case == camel_case_value
     assert resp.snake_case == snake_case_value
-
-    delattr(models, 'TestSchema')
