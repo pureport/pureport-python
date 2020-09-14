@@ -4,12 +4,13 @@
 # All Rights Reserved
 
 import pytest
-from pureport import api
+from pureport import models
 from .test_helpers import ModelData
+models.make()
 
 
 @pytest.mark.parametrize(
-    "model",
+    "modela",
     [
         ModelData("Network", type="Network", name="", remove=True),
         ModelData("Connection", type="AWS_DIRECT_CONNECT", name="", remove=True),
@@ -24,10 +25,8 @@ from .test_helpers import ModelData
             remove=True,
         ),
         ModelData("Connection", type="AWS_DIRECT_CONNECT", location="", remove=True),
-        ModelData("Connection", type="AWS_DIRECT_CONNECT", speed=150),
-        ModelData("Connection", type="AWS_DIRECT_CONNECT", billing_term="None"),
     ],
 )
-def test_model_load_exception(model):
+def test_model_load_exception(modela):
     with pytest.raises(TypeError):
-        result = api.models.load(model.type, model.data)
+        result = models.load(modela.type, modela.data)

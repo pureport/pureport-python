@@ -5,9 +5,10 @@
 
 import pytest
 import random
-from pureport import api
+from pureport import models
 from ..utils import utils
-from .test_helpers import ModelData 
+from .test_helpers import ModelData
+models.make()
 
 
 @pytest.mark.parametrize(
@@ -36,4 +37,4 @@ from .test_helpers import ModelData
     ],
 )
 def test_model_load(model):
-    assert api.models.load(model.type, model.data)
+    assert models.load(model.type, model.data)
