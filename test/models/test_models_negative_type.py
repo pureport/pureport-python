@@ -29,4 +29,4 @@ models.make()
 )
 def test_model_load_exception(model):
     with pytest.raises(TypeError):
-        result = models.load(model.type, model.data)
+        models.load(model.type, model.data)
