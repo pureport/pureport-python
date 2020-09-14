@@ -39,29 +39,14 @@ from __future__ import absolute_import
 import json
 import logging
 
-from functools import (
-    partial,
-    update_wrapper,
-)
+from functools import partial
+from functools import update_wrapper
 
-
-from pureport.transforms import (
-    to_list,
-    to_snake_case
-)
-
-from pureport import (
-    models,
-    defaults
-)
-
-from pureport.helpers import (
-    get_api,
-    get_value
-)
-
-from pureport.session import Session
-from pureport.credentials import default
+from pureport import models
+from pureport.transforms import to_list
+from pureport.transforms import to_snake_case
+from pureport.helpers import get_api
+from pureport.helpers import get_value
 from pureport.exceptions import PureportError
 
 
@@ -185,7 +170,13 @@ def request(session, method, uri, *args, **kwargs):
 
     for p in parameters:
         if variables.get(p) is None:
-            raise PureportError("missing required argument: {}".format(to_snake_case(p)))
+            # inject the session accountId automatically into the variables
+            # if it is the only parameter that doesn't have a supplied value.
+            if len(parameters) == 1 and p == 'accountId':
+                log.debug("automatically injecting account_id argument")
+                variables['accountId'] = session.account_id
+            else:
+                raise PureportError("missing required argument: {}".format(to_snake_case(p)))
 
     func = globals().get(method)
     data = func(session, uri, body=body, variables=variables, query=query_values)
@@ -205,14 +196,8 @@ def request(session, method, uri, *args, **kwargs):
     return data
 
 
-def make():
-    log.debug("attempting to make bindings for openapi spec")
-
-    session = Session(*default())
+def make(session):
     apispec = get_api(session)
-
-    models.make(apispec)
-
     for uri, properties in apispec['paths'].items():
         for method, attrs in properties.items():
             if 'operationId' in attrs:
@@ -221,8 +206,4 @@ def make():
                 func.__doc__ = attrs.get('summary')
                 func.__name__ = name
                 log.debug('adding function {}'.format(name))
-                globals()[name] = func
-
-
-if defaults.automake_bindings is True:
-    make()
+                setattr(session, name, func)

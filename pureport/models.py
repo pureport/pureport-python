@@ -20,9 +20,14 @@ import logging
 
 from keyword import iskeyword
 from functools import partial
+from functools import lru_cache
 
 from pureport.transforms import to_snake_case
+from pureport.helpers import get_api
+from pureport.helpers import get_value
 from pureport.exceptions import PureportError
+from pureport.session import Session
+from pureport.credentials import default
 
 
 log = logging.getLogger(__name__)
@@ -276,7 +281,7 @@ def _set_property(self, value, name):
 
     if this is None and self._schema.base:
         for item in self._schema.base:
-            this = self._schema.parents[item].propertes.get(name)
+            this = self._schema.parents[item].properties.get(name)
             if this:
                 break
         else:
@@ -406,7 +411,15 @@ class StrictBase(Base):
                 raise ValueError(msg)
 
 
-def make(schemas):
+@lru_cache(maxsize=16)
+def make(session=None):
+    log.debug("generating bindings for models")
+
+    session = session or Session(*default())
+
+    schemas = get_api(session)
+    globals()['__version__'] = get_value('info.version', schemas)
+
     schemas = load_api(schemas)
     models = list()
 

@@ -32,6 +32,7 @@ from __future__ import absolute_import
 import json
 import time
 import logging
+import importlib
 
 from urllib.parse import urljoin
 
@@ -52,7 +53,7 @@ class Session(Request):
     authorization using the provided credentials
     """
 
-    def __init__(self, credentials, base_url=None):
+    def __init__(self, credentials, base_url=None, automake_bindings=False):
         """Initializes a new instance of `Session`
 
         :param credentials: credentials object to use to authorize
@@ -73,8 +74,12 @@ class Session(Request):
         self.authorization_expiration = None
 
         self.base_url = base_url or defaults.api_base_url
+        self._account_id = None
 
         super(Session, self).__init__()
+
+        if automake_bindings is True:
+            self.make_bindings()
 
     @property
     def authorized(self):
@@ -87,6 +92,19 @@ class Session(Request):
             if self.authorization_expiration >= time.time():
                 return True
         return False
+
+    @property
+    def account_id(self):
+        if self._account_id is None:
+            objects = self.get('/accounts')
+            candidates = [o['id'] for o in objects.json]
+            for item in objects.json:
+                if item['parent']['id'] not in candidates:
+                    break
+            else:
+                item = None
+            self._account_id = item['id']
+        return self._account_id
 
     def __call__(self, method, url, body=None, headers=None, query=None):
         """Manages the sending and receiving of requests
@@ -134,7 +152,7 @@ class Session(Request):
         url = urljoin(self.base_url, url)
 
         log.debug("sending request to {}".format(self.base_url))
-        log.debug("body={}".format(body))
+        log.debug("body={}, query={}".format(body, query))
         resp = super(Session, self).__call__(method, url, body, headers, query=query)
         log.debug("received valid response, returning to calling function")
         return resp
@@ -163,6 +181,17 @@ class Session(Request):
         }
 
         self.authorization_expiration = time.time() + data['expires_in']
+
+    def make_bindings(self):
+        """Generate Python bindings from Pureport REST API
+
+        Generages the Python language bindings and adds them to this
+        instance of `Session`.  This method only needs to be called
+        once to add the language bindings to the object
+        """
+        for item in ('models', 'functions', 'query'):
+            mod = importlib.import_module('pureport.{}'.format(item))
+            mod.make(self)
 
     def get(self, url, body=None, headers=None, query=None):
         """ HTTP GET method

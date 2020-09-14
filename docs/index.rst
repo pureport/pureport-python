@@ -27,8 +27,9 @@ https://console.pureport.com.
 
    installation
    session
-   api
+   bindings
    defaults
+   changelog
 
 
 Indices and tables

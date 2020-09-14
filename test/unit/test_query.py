@@ -2,16 +2,17 @@
 #
 # Copyright (c) 2020, Pureport, Inc.
 # All Rights Reserved
-
+#
 from collections import namedtuple
 
-from unittest.mock import patch
+from unittest.mock import Mock
 
 import pytest
 
 from ..utils import utils
 
 from pureport import query
+from pureport.session import Session
 from pureport.exceptions import PureportError
 
 
@@ -42,13 +43,19 @@ def test_find_object_raises_exception():
         query.find_object(function, utils.random_string())
 
 
-@patch.object(query, 'api')
-def test_query_functions_exist(mock_api):
-    mock_api.return_value = lambda: []
+def test_query_functions_exist():
+    session = Mock(spec=Session)
 
-    query.make()
+    session.find_connections = lambda self: []
+    session.find_networks = lambda self: []
 
-    assert hasattr(query, 'find_network')
-    assert callable(query.find_network)
-    assert hasattr(query, 'find_connection')
-    assert callable(query.find_connection)
+    assert not hasattr(session, 'find_network')
+    assert not hasattr(session, 'find_connection')
+
+    query.make(session)
+
+    assert hasattr(session, 'find_network')
+    assert callable(session.find_network)
+
+    assert hasattr(session, 'find_connection')
+    assert callable(session.find_connection)

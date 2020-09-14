@@ -29,13 +29,6 @@ def config_item(default, description=None, env=None, transform=None):
     return ConfigItem(description, default, env, transform)
 
 
-ACCOUNT_ID = config_item(
-    description="Returns the default Pureport account ID",
-    default=None,
-    env="PUREPORT_ACCOUNT_ID"
-)
-
-
 API_BASE_URL = config_item(
     description="Configures the base url to use for the Pureport API",
     default="https://api.pureport.com",
@@ -54,14 +47,6 @@ API_SECRET = config_item(
     description="Returns the default Pureport API secret",
     default=None,
     env="PUREPORT_API_SECRET"
-)
-
-
-AUTOMAKE_BINDINGS = config_item(
-    description="Automatically run make() for API bindings",
-    default=True,
-    transform=transforms.to_bool,
-    env="PUREPORT_AUTOMAKE_BINDINGS"
 )
 
 

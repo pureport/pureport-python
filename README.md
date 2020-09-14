@@ -1,6 +1,7 @@
 # Pureport Python SDK
 
-![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg)
+![test](https://github.com/pureport/pureport-python/workflows/test/badge.svg) [![Documentation Status](https://readthedocs.org/projects/pureport-python/badge/?version=latest)](https://pureport-python.readthedocs.io/en/latest/?badge=latest)
+
 
 The Pureport Python Client provides a Python programmatic interface to the 
 Pureport REST API.  The Pureport Python Client is predominately a session and 
@@ -65,12 +66,29 @@ convenience methods for sending requests to the server.
 ```
 
 The library also provides a set of functional bindings to the Pureport
-API using the OpenAPI spec file.  To use the functional bindings, 
-import the API module and call the function directly.
+API using the OpenAPI spec file.  Bindings are not enabled by default 
+when you create a new instance of `Sesssion`.  To add bindings to a
+`Session` object, call `make_bindings()`. 
 
 ```
-   from pureport import api
-   api.find_all_accounts()
+   from pureport.session import Session
+   from pureport.credentials import default
+
+   session = Session(*default())
+   session.make_bindings()
+ 
+   session.find_all_accounts()
+```
+
+Alternatively you can also enable bindings to be created at session
+initialization.
+
+```
+   from pureport.session import Session
+   from pureport.credentials import default
+
+   session = Session(*default(), automake_bindings=True)
+   session.find_all_accounts()
 ```
 
 For details and documentation of the Pureport Fabric API, please check 
