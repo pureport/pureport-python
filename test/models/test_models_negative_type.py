@@ -10,7 +10,7 @@ models.make()
 
 
 @pytest.mark.parametrize(
-    "modela",
+    "model",
     [
         ModelData("Network", type="Network", name="", remove=True),
         ModelData("Connection", type="AWS_DIRECT_CONNECT", name="", remove=True),
@@ -27,6 +27,6 @@ models.make()
         ModelData("Connection", type="AWS_DIRECT_CONNECT", location="", remove=True),
     ],
 )
-def test_model_load_exception(modela):
+def test_model_load_exception(model):
     with pytest.raises(TypeError):
-        result = models.load(modela.type, modela.data)
+        result = models.load(model.type, model.data)
