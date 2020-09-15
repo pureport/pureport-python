@@ -5,10 +5,12 @@
 
 import pytest
 import random
+import json
+import os
+from unittest.mock import patch, Mock
 from pureport import models
 from ..utils import utils
 from .test_helpers import ModelData
-models.make()
 
 
 @pytest.mark.parametrize(
@@ -36,5 +38,14 @@ models.make()
         ),
     ],
 )
-def test_model_load(model):
+@patch.object(models, 'get_api')
+def test_model_load(mock_get_api, model):
+    basepath = os.path.dirname(__file__)
+    content = json.loads(
+        open(os.path.join(basepath, '../openapi.json')).read()
+    )
+    mock_get_api.return_value = content
+    session = Mock()
+    models.make(session)
+
     assert models.load(model.type, model.data)
