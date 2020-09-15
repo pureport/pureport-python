@@ -63,7 +63,8 @@ class ModelData(object):
 
             elif self.conn_type == "AWS_DIRECT_CONNECT":
                 self.data_type = {
-                    "aws_account_id": "".join(random.choices(string.digits, k=12)),
+                    "aws_account_id":
+                        "".join(random.choice(string.digits) for _ in range(12)),
                     "aws_region": utils.random_string(min=1, max=64),
                 }
             elif self.conn_type == "GOOGLE_CLOUD_INTERCONNECT":

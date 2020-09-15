@@ -16,11 +16,6 @@ from .test_helpers import ModelData
     [
         ModelData("Connection", type="AWS_DIRECT_CONNECT", speed=150),
         ModelData("Connection", type="AWS_DIRECT_CONNECT", billing_term="None"),
-        ModelData(
-            "Connection",
-            type="AWS_DIRECT_CONNECT",
-            customer_networks=[{"name": 100, "address": 100}]
-        )
     ],
 )
 @patch.object(models, 'get_api')
