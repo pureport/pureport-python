@@ -36,6 +36,7 @@ objects.  Please see `pureport.models` for more details.
 """
 from __future__ import absolute_import
 
+import re
 import json
 import logging
 
@@ -77,6 +78,13 @@ def send_request(session, url, method='GET', status_codes=None, variables=None, 
     status_codes = to_list(status_codes) or (200,)
 
     body = json.dumps(kwargs.get('body', {})) if kwargs else None
+
+    # convert any url variables to snake case
+    # for instance:
+    #   /accounts/{accountId} becomes /accounts/{account_id}
+    #
+    snake_case = lambda m: "{{{}}}".format(to_snake_case(m.group(1)))
+    url = re.sub("\{(\S+)\}", snake_case, url)
     url = url.format(**(variables or {}))
 
     log.debug("calling session with url {}".format(url))
@@ -99,12 +107,24 @@ update_wrapper(put, send_request)
 post = partial(send_request, method='POST', status_codes=(201,))
 update_wrapper(post, send_request)
 
-delete = partial(send_request, method='DELETE', status_codes=(200,))
+delete = partial(send_request, method='DELETE', status_codes=(204,))
 update_wrapper(delete, send_request)
 
 
 def request(session, method, uri, *args, **kwargs):
     """Send a request to the URI and return the response
+
+    The generic form of the function signature is as follows:
+
+    .. code-block:: python
+
+        args = [o['name'] for o in parameters if o['in'] == 'path']
+        function(*args, model=None, query=None)
+
+
+    If accountId is in the list of args and the value is not supplied then
+    the function will automatically insert the discovered account_id
+    for the session.
 
     :param method: the http method to call
     :type method: str
@@ -122,9 +142,10 @@ def request(session, method, uri, *args, **kwargs):
 
     parameters = list()
     query = {}
+
     for item in path.get('parameters', []):
         if item.get('in', 'path') == 'path' and item.get('required', True) is True:
-            parameters.append(item['name'])
+            parameters.append(to_snake_case(item['name']))
         elif item.get('in') == 'query':
             query[to_snake_case(item['name'])] = None
 
@@ -172,11 +193,11 @@ def request(session, method, uri, *args, **kwargs):
         if variables.get(p) is None:
             # inject the session accountId automatically into the variables
             # if it is the only parameter that doesn't have a supplied value.
-            if len(parameters) == 1 and p == 'accountId':
+            if p == 'account_id':
                 log.debug("automatically injecting account_id argument")
-                variables['accountId'] = session.account_id
+                variables['account_id'] = session.account_id
             else:
-                raise PureportError("missing required argument: {}".format(to_snake_case(p)))
+                raise PureportError("missing required argument: {}".format(p))
 
     func = globals().get(method)
     data = func(session, uri, body=body, variables=variables, query=query_values)
