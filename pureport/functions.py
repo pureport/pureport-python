@@ -104,7 +104,7 @@ update_wrapper(get, send_request)
 put = partial(send_request, method='PUT', status_codes=(200,))
 update_wrapper(put, send_request)
 
-post = partial(send_request, method='POST', status_codes=(201,))
+post = partial(send_request, method='POST', status_codes=(200, 201,))
 update_wrapper(post, send_request)
 
 delete = partial(send_request, method='DELETE', status_codes=(204,))
