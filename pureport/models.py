@@ -256,6 +256,72 @@ def load_api(data):
     return objects
 
 
+class Array(object):
+
+    def __init__(self, cls):
+        self.cls = cls
+        self._items = list()
+
+    def __repr__(self):
+        return str(self._items)
+
+    def __validate__(self, value):
+        if isinstance(value, dict):
+            value = load(self.cls.__name__, value)
+        if not isinstance(value, self.cls):
+            raise PureportError("invalid value type")
+        return value
+
+    def __getitem__(self, index):
+        return self._items[index]
+
+    def __setitem__(self, index, value):
+        self._items[index] = self.__validate__(value)
+
+    def __delitem__(self, index):
+        del self._items[index]
+
+    def __contains__(self, value):
+        return value in self._items
+
+    def __iter__(self):
+        return iter(self._items)
+
+    def __iadd__(self, other):
+        self._items.expand(other)
+
+    def __reversed__(self):
+        return self._items.reversed()
+
+    def __len__(self):
+        return len(self._items)
+
+    def insert(self, index, value):
+        self._items[index] = self.__validate__(value)
+
+    def index(self, value):
+        return self._items.index(value)
+
+    def count(self, value):
+        return self._items.count(value)
+
+    def append(self, value):
+        self._items.append(self.__validate__(value))
+
+    def reverse(self):
+        self._items.reverse()
+
+    def extend(self, value):
+        value = [self.__validate__(v) for v in value]
+        self._items.extend(value)
+
+    def pop(self, index):
+        self._items.pop(index)
+
+    def remove(self, value):
+        self._items.remove(value)
+
+
 def _get_property(self, name):
     if name in self.__dict__:
         return self.__dict__[name]
@@ -339,19 +405,15 @@ def _set_property(self, value, name):
                     raise ValueError("invalid value for type <array>")
 
                 if this.get('uniqueItems') is True:
-                    if value and isinstance(value[0], dict):
-                        val = [dict(o) for o in set(frozenset(item.items()) for item in value)]
-                        val = [dict([(to_snake_case(k), v) for k, v in val.items()])]
+                    if this.get('items') and '$ref' in this['items']:
+                        clsname = this['items']['$ref'].split('/')[-1]
+                        val = Array(globals().get(clsname))
+                        for item in value:
+                            val.append(load(clsname, item))
                     else:
                         val = list(set(value))
                 else:
                     val = list(value)
-
-                if this.get('items'):
-                    if '$ref' in this['items']:
-                        ref = this['items']['$ref'].split('/')[-1]
-                        if globals().get(ref).properties:
-                            val = [type(ref, (Base,), {})(**item) for item in list(val)]
 
             elif this.get('type') == 'object':
                 if not isinstance(value, dict):

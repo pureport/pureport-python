@@ -5,6 +5,7 @@ v0.4.0 / (in progress)
 ----------------------
 
   * fixes error with auto inserting discovered accountId argument
+  * converts list items to appropriate typed classes
 
 
 v0.3.0 / 2020-09-13
