@@ -26,6 +26,7 @@ from pureport.transforms import to_snake_case
 from pureport.transforms import to_str
 from pureport.transforms import to_int
 from pureport.transforms import to_bool
+from pureport.transforms import to_list
 from pureport.helpers import get_api
 from pureport.helpers import get_value
 from pureport.exceptions import PureportError
@@ -406,24 +407,24 @@ def _set_property(self, value, name):
                 if not isinstance(value, (list, set, tuple, dict)):
                     raise ValueError("invalid value for type <array>")
 
-                if this.get('uniqueItems') is True:
-                    if this.get('items') and '$ref' in this['items']:
-                        clsname = this['items']['$ref'].split('/')[-1]
-                        val = Array(globals().get(clsname))
-                        for item in value:
-                            val.append(load(clsname, item))
-                    elif this.get('items') and 'type' in this['items']:
-                        item_type = this['items']['type']
-                        if item_type == 'string':
-                            val = list(set([to_str(v) for v in value]))
-                        elif item_type == 'integer':
-                            val = list(set([to_int(v) for v in value]))
-                        else:
-                            val = list(set(value))
+                if this.get('items') and '$ref' in this['items']:
+                    clsname = this['items']['$ref'].split('/')[-1]
+                    val = Array(globals().get(clsname))
+                    for item in value:
+                        val.append(load(clsname, item))
+                elif this.get('items') and 'type' in this['items']:
+                    item_type = this['items']['type']
+                    if item_type == 'string':
+                        val = [to_str(v) for v in value]
+                    elif item_type == 'integer':
+                        val = [to_int(v) for v in value]
                     else:
-                        val = list(set(value))
+                        val = to_list(value)
                 else:
-                    val = list(value)
+                    val = to_list(value)
+
+                if this.get('uniqueItems') is True:
+                    val = list(set(val))
 
             elif this.get('type') == 'object':
                 if not isinstance(value, dict):

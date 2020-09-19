@@ -84,7 +84,7 @@ def send_request(session, url, method='GET', status_codes=None, variables=None, 
     #   /accounts/{accountId} becomes /accounts/{account_id}
     #
     snake_case = lambda m: "{{{}}}".format(to_snake_case(m.group(1)))
-    url = re.sub("\{(\S+)\}", snake_case, url)
+    url = re.sub(r"\{(\S+)\}", snake_case, url)
     url = url.format(**(variables or {}))
 
     log.debug("calling session with url {}".format(url))
