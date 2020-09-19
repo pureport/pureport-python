@@ -262,7 +262,7 @@ def load_api(data):
 
 class Array(object):
 
-    def __init__(self, cls, minitems=None, maxitems=None):
+    def __init__(self, cls):
         self.cls = cls
         self._items = list()
 
@@ -462,10 +462,25 @@ class Base(object):
                 self.__dict__[key] = value
 
     def serialize(self):
+        """Serialize the object to a dict
+
+        All properties will be serialized to key value pairs using
+        the currenty property name in snake case.  If you need to
+        serialize the object to camel case names, use the `dump`
+        function instead.
+
+        :returns: a dict object that presents the instance
+        :rtype: dict
+        """
         obj = {}
         for key, value in self.__dict__.items():
             if isinstance(value, Base):
                 obj[key] = value.serialize()
+            elif isinstance(value, list) and len(value):
+                if isinstance(value[0], Base):
+                    obj[key] = [v.serialize() for v in value]
+                else:
+                    obj[key] = value
             else:
                 obj[key] = value
         return obj
