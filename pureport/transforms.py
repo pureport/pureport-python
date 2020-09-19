@@ -9,12 +9,14 @@ transforming data into a native Python data type.
 """
 from __future__ import absolute_import
 
+import sys
 import re
 
+from pureport.exceptions import PureportError
 from pureport.exceptions import PureportTransformError
 
 
-def to_int(val):
+def to_int(val, minimum=None, maximum=None):
     """Convert value to type int
 
     :param val: any valid object
@@ -26,7 +28,12 @@ def to_int(val):
     :raises: :class:`pureport.exceptions.PureportTransformError`
     """
     try:
-        return int(val)
+        minimum = minimum or 0
+        maximum = maximum or sys.maxsize
+        val = int(val)
+        if minimum > val > maximum:
+            raise PureportError("integer is outside of defined range")
+        return val
     except ValueError as exc:
         raise PureportTransformError(
             "unable to convert value to type `int`",
@@ -66,7 +73,7 @@ def to_bool(val):
     return bool(val)
 
 
-def to_str(val):
+def to_str(val, minlen=None, maxlen=None):
     """Convert value to type str
 
     :param val: any valid object
@@ -75,7 +82,15 @@ def to_str(val):
     :return: a str value
     :rtype: str
     """
-    return str(val)
+    val = str(val)
+
+    minlen = minlen or 0
+    maxlen = maxlen or sys.maxsize
+
+    if minlen > len(val) > maxlen:
+        raise PureportError("string has invalid length")
+
+    return val
 
 
 def to_float(val):

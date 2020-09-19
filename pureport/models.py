@@ -23,6 +23,9 @@ from functools import partial
 from functools import lru_cache
 
 from pureport.transforms import to_snake_case
+from pureport.transforms import to_str
+from pureport.transforms import to_int
+from pureport.transforms import to_bool
 from pureport.helpers import get_api
 from pureport.helpers import get_value
 from pureport.exceptions import PureportError
@@ -258,7 +261,7 @@ def load_api(data):
 
 class Array(object):
 
-    def __init__(self, cls):
+    def __init__(self, cls, minitems=None, maxitems=None):
         self.cls = cls
         self._items = list()
 
@@ -387,18 +390,17 @@ def _set_property(self, value, name):
 
         if value is not None:
             if this.get('type') == 'string':
-                val = str(value)
-
                 maxlen = this.get('maxLength') or sys.maxsize
                 minlen = this.get('minLength') or 0
-
-                if minlen > len(val) > maxlen:
-                    raise ValueError("invalid length")
+                val = to_str(value, minlen, maxlen)
 
             elif this.get('type') == 'boolean':
-                if not isinstance(value, bool):
-                    raise ValueError("property must be of type <bool>")
-                val = bool(value)
+                val = to_bool(value)
+
+            elif this.get('type') == 'integer':
+                minimum = this.get('minimum')
+                maximum = this.get('maximum')
+                val = to_int(value, minimum, maximum)
 
             elif this.get('type') == 'array':
                 if not isinstance(value, (list, set, tuple, dict)):
@@ -410,6 +412,14 @@ def _set_property(self, value, name):
                         val = Array(globals().get(clsname))
                         for item in value:
                             val.append(load(clsname, item))
+                    elif this.get('items') and 'type' in this['items']:
+                        item_type = this['items']['type']
+                        if item_type == 'string':
+                            val = list(set([to_str(v) for v in value]))
+                        elif item_type == 'integer':
+                            val = list(set([to_int(v) for v in value]))
+                        else:
+                            val = list(set(value))
                     else:
                         val = list(set(value))
                 else:
