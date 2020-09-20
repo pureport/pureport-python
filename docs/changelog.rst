@@ -9,6 +9,7 @@ v0.4.0 / (in progress)
   * model setters now use transforms to set descriptors
   * transforms updated to include min and max values for int and str
   * adds serialize() function to Array class
+  * adds update() method to models Base class
 
 
 
