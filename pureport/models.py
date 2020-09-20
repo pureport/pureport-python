@@ -325,6 +325,9 @@ class Array(object):
     def remove(self, value):
         self._items.remove(value)
 
+    def serialize(self):
+        return [o.serialize() for o in self._items]
+
 
 def _get_property(self, name):
     if name in self.__dict__:
@@ -474,7 +477,7 @@ class Base(object):
         """
         obj = {}
         for key, value in self.__dict__.items():
-            if isinstance(value, Base):
+            if isinstance(value, (Base, Array)):
                 obj[key] = value.serialize()
             elif isinstance(value, list) and len(value):
                 if isinstance(value[0], Base):

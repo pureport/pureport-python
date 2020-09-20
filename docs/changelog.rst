@@ -8,6 +8,8 @@ v0.4.0 / (in progress)
   * converts list items to appropriate typed classes
   * model setters now use transforms to set descriptors
   * transforms updated to include min and max values for int and str
+  * adds serialize() function to Array class
+
 
 
 v0.3.0 / 2020-09-13
