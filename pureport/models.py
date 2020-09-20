@@ -199,6 +199,9 @@ def load(clsname, data):
             schema = globals().get(clsname)._schema
             properties.update(schema.properties)
 
+    for key, value in schema.parents.items():
+        properties.update(value.properties)
+
     for key, value in properties.items():
         if data.get(key) is not None:
             if '$ref' in value:
