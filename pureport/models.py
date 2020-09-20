@@ -464,6 +464,15 @@ class Base(object):
             except AttributeError:
                 self.__dict__[key] = value
 
+    def update(self, data):
+        """Update the model with new values
+        """
+        for key, value in data.items():
+            if isinstance(getattr(self, key), Base):
+                model = describe(self.__class__.__name__)
+                value = load(model[key]['ref'], value)
+            setattr(self, key, value)
+
     def serialize(self):
         """Serialize the object to a dict
 
