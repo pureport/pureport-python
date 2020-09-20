@@ -10,7 +10,7 @@ v0.4.0 / (in progress)
   * transforms updated to include min and max values for int and str
   * adds serialize() function to Array class
   * adds update() method to models Base class
-
+  * fixes issue with child models failing to load properly
 
 
 v0.3.0 / 2020-09-13
