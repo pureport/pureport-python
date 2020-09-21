@@ -91,7 +91,9 @@ def send_request(session, url, method='GET', status_codes=None, variables=None, 
     response = session(method, url, body=body, query=query)
 
     if response.status not in status_codes:
-        raise PureportError("invalid status code received from response")
+        log.debug("invalid status code: got {}".format(response.status))
+        log.debug("   expected: {}".format(','.join([str(s) for s in status_codes])))
+        raise PureportError("invalid status code: {}".format(response.status))
 
     assert hasattr(response, 'json'), "missing required attribute `json`"
 
@@ -107,7 +109,7 @@ update_wrapper(put, send_request)
 post = partial(send_request, method='POST', status_codes=(200, 201,))
 update_wrapper(post, send_request)
 
-delete = partial(send_request, method='DELETE', status_codes=(204,))
+delete = partial(send_request, method='DELETE', status_codes=(200, 204))
 update_wrapper(delete, send_request)
 
 
@@ -157,7 +159,7 @@ def request(session, method, uri, *args, **kwargs):
         schema = getattr(models, clsname)._schema
 
         if schema.discriminator:
-            propval = getattr(args[1], schema.discriminator['propertyName'])
+            propval = getattr(kwargs['model'], schema.discriminator['propertyName'])
             clsname = schema.discriminator['mapping'].get(propval).split('/')[-1]
 
         cls = getattr(models, clsname, None)
@@ -197,6 +199,7 @@ def request(session, method, uri, *args, **kwargs):
                 log.debug("automatically injecting account_id argument")
                 variables['account_id'] = session.account_id
             else:
+                import q; q.d()
                 raise PureportError("missing required argument: {}".format(p))
 
     func = globals().get(method)
