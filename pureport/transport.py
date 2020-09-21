@@ -91,28 +91,16 @@ class Request(object):
     :class:`Response`
     """
 
-    def __init__(self, connect_timeout=None, read_timeout=None):
+    def __init__(self):
         """Initialize a new `Request` instance
-
-        :param connect_timeout: HTTP connect timeout (default=3.0)
-        :type connect_timeout: float
-
-        :param read_timeout: HTTP read timeout (default=10.0)
-        :type read_timeout: float
 
         :return: HTTP Request object
         :rtype: :class:`Request`
         """
-        connect_timeout = defaults.transport_connect_timeout
-        read_timeout = defaults.transport_read_timeout
         self.http = urllib3.PoolManager(
             headers={'Content-Type': 'application/json'},
-            timeout=urllib3.util.Timeout(connect_timeout, read_timeout)
         )
-        log.debug(
-            "Created new HTTP Pool (connect_timeout={}, "
-            "read_timeout={})".format(connect_timeout, read_timeout)
-        )
+        log.debug("Created new HTTP Pool")
 
     def __call__(self, method, url, body=None, headers=None, query=None):
         """Sends the HTTP request
@@ -140,7 +128,7 @@ class Request(object):
             log.debug("method={}, url={}".format(method, url))
             log.debug("headers={}".format(','.join(headers or {})))
             resp = self.http.request(method, url, body=body, headers=headers, fields=query)
-        except (HTTPError, TimeoutError) as exc:
+        except (HTTPError) as exc:
             message = getattr(exc, 'message', None) or \
                     defaults.generic_transport_error_message
             raise PureportTransportError(message, exc=exc)
