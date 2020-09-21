@@ -80,22 +80,6 @@ LOGGING_LEVEL = config_item(
 )
 
 
-TRANSPORT_CONNECT_TIMEOUT = config_item(
-    description="HTTP connection timeout value",
-    default=3.0,
-    transform=transforms.to_float,
-    env="PUREPORT_TRANSPORT_CONNECT_TIMEOUT"
-)
-
-
-TRANSPORT_READ_TIMEOUT = config_item(
-    description="HTTP socket read timeout value",
-    default=10.0,
-    transform=transforms.to_float,
-    env="PUREPORT_TRANSPORT_READ_TIMEOUT"
-)
-
-
 def defaults():
     attrs = {}
     for item in globals():
