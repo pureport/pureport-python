@@ -199,7 +199,6 @@ def request(session, method, uri, *args, **kwargs):
                 log.debug("automatically injecting account_id argument")
                 variables['account_id'] = session.account_id
             else:
-                import q; q.d()
                 raise PureportError("missing required argument: {}".format(p))
 
     func = globals().get(method)
