@@ -22,7 +22,6 @@ import logging
 import urllib3
 
 from urllib3.exceptions import HTTPError
-from urllib3.exceptions import TimeoutError
 
 from pureport import defaults
 from pureport.exceptions import PureportTransportError
