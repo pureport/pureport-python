@@ -51,7 +51,7 @@ def test_methods_with_body(mock_request):
 
 
 @patch.object(urllib3, 'request_encode_url')
-def test_methods_with_body(mock_request):
+def test_methods_with_query(mock_request):
     mock_request.return_value = response()
     req = pureport.transport.Request()
     data = {utils.random_string(): utils.random_string()}
@@ -61,7 +61,6 @@ def test_methods_with_body(mock_request):
     assert resp.status == 200
     assert resp.data is None
     assert resp.json is None
-
 
 
 @patch.object(urllib3, 'urlopen')
