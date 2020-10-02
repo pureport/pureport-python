@@ -127,7 +127,18 @@ class Request(object):
             log.debug("Sending request to remote server")
             log.debug("method={}, url={}".format(method, url))
             log.debug("headers={}".format(','.join(headers or {})))
-            resp = self.http.request(method, url, body=body, headers=headers, fields=query)
+
+            if body is not None:
+                if isinstance(body, dict):
+                    body = json.dumps(body)
+                resp = self.http.urlopen(method, url, body=body, headers=headers)
+
+            elif query is not None:
+                resp = self.http.request_encode_url(method, url, fields=query, headers=headers)
+
+            else:
+                resp = self.http.request(method, url, headers=headers)
+
         except (HTTPError) as exc:
             message = getattr(exc, 'message', None) or \
                     defaults.generic_transport_error_message

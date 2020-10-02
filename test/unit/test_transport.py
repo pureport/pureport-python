@@ -31,26 +31,40 @@ def test_default(mock_request):
     req = pureport.transport.Request()
     url = utils.random_string()
     resp = req('GET', url)
-    mock_request.assert_called_with('GET', url, body=None, headers=None, fields=None)
+    mock_request.assert_called_with('GET', url, headers=None)
     assert resp.status == 200
     assert resp.data is None
     assert resp.json is None
 
 
-@patch.object(urllib3, 'request')
+@patch.object(urllib3, 'urlopen')
 def test_methods_with_body(mock_request):
     mock_request.return_value = response()
     req = pureport.transport.Request()
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
+    mock_request.assert_called_with('GET', url, body=json.dumps(data), headers=None)
     assert resp.status == 200
     assert resp.data is None
     assert resp.json is None
 
 
-@patch.object(urllib3, 'request')
+@patch.object(urllib3, 'request_encode_url')
+def test_methods_with_body(mock_request):
+    mock_request.return_value = response()
+    req = pureport.transport.Request()
+    data = {utils.random_string(): utils.random_string()}
+    url = utils.random_string()
+    resp = req('GET', url, query=data)
+    mock_request.assert_called_with('GET', url, fields=data, headers=None)
+    assert resp.status == 200
+    assert resp.data is None
+    assert resp.json is None
+
+
+
+@patch.object(urllib3, 'urlopen')
 def test_methods_return_data(mock_request):
     response_data = str((utils.random_string(), utils.random_string(), utils.random_string()))
     mock_request.return_value = response(data=response_data)
@@ -58,13 +72,13 @@ def test_methods_return_data(mock_request):
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
+    mock_request.assert_called_with('GET', url, body=json.dumps(data), headers=None)
     assert resp.status == 200
     assert resp.data == response_data
     assert resp.json is None
 
 
-@patch.object(urllib3, 'request')
+@patch.object(urllib3, 'urlopen')
 def test_methods_return_data_and_json(mock_request):
     response_data = json.dumps({utils.random_string(): utils.random_string()})
     mock_request.return_value = response(data=response_data)
@@ -72,7 +86,7 @@ def test_methods_return_data_and_json(mock_request):
     data = {utils.random_string(): utils.random_string()}
     url = utils.random_string()
     resp = req('GET', url, body=data)
-    mock_request.assert_called_with('GET', url, body=data, headers=None, fields=None)
+    mock_request.assert_called_with('GET', url, body=json.dumps(data), headers=None)
     assert resp.status == 200
     assert resp.data == response_data
     assert resp.json == json.loads(response_data)

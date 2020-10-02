@@ -66,7 +66,7 @@ def test_convenience_methods(mock_request):
         assert resp.json is None
 
 
-@patch.object(urllib3, 'request')
+@patch.object(urllib3, 'urlopen')
 def test_call_converts_dict_to_json(mock_request):
     mock_request.return_value = response()
 
@@ -87,7 +87,7 @@ def test_call_converts_dict_to_json(mock_request):
     assert resp.json is None
 
 
-@patch.object(urllib3, 'request')
+@patch.object(urllib3, 'urlopen')
 def test_call_with_authorize(mock_request):
     auth_response = {
         'access_token': utils.random_string(),
