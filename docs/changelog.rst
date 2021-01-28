@@ -1,8 +1,9 @@
 Changelog
 =========
 
-v0.5.0 / in progress
---------------------
+v0.5.0 / 2021-01-28
+-------------------
+  * fixes bug with how requests are handled by urllib3
 
 v0.4.0 / 2020-09-22
 -------------------

@@ -12,6 +12,7 @@ tox = "*"
 sphinx = "*"
 sphinx_rtd_theme = "*"
 flake8 = "*"
+twine = "*"
 
 [packages]
 urllib3 = "*"
